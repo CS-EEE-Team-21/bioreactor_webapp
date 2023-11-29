@@ -1,0 +1,15 @@
+const mongoose = require('mongoose');
+
+// const MONGO_URI = process.env.MONGODB_URI;
+const MONGO_URI = "mongodb+srv://abrd:PMOqoYRSntCyoXTg@bioreactor.ug6wy4p.mongodb.net/?retryWrites=true&w=majority";
+
+mongoose.connect(MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+  .then(() => {
+    console.log('Connected to MongoDB');
+  })
+  .catch((error) => {
+    console.error('Error connecting to MongoDB:', error);
+  });
