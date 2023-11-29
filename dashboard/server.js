@@ -1,15 +1,11 @@
 const { createServer } = require('http');
 const next = require('next');
-const { WebSocketServer } = require('ws');
 const mqtt = require('mqtt');
 const { Temperature } = require('./models/Temperature');
 const { Ph } = require('./models/Ph');
 const { RotationSpeed } = require('./models/RotationSpeed');
 require('./db');
-// const Temperature = require('../models/temperature');
-
-// mosquitto publication note:
-// mosquitto_pub -h test.mosquitto.org -p 1883 -t UCL_EE-CS_team21 -m rots:00
+const socketIo = require('socket.io');
 
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
@@ -20,25 +16,15 @@ app.prepare().then(() => {
     return handle(req, res);
   });
 
-  const wss = new WebSocketServer({ noServer: true });
+  const io = socketIo(server);
 
-  server.on('upgrade', (request, socket, head) => {
-    wss.handleUpgrade(request, socket, head, (ws) => {
-      wss.emit('connection', ws, request);
-    });
-  });
-
-  wss.on('connection', (ws) => {
+  io.on('connection', (socket) => {
     console.log('Client connected');
 
-    ws.on('close', () => {
-        console.log('Client disconnected');
+    socket.on('disconnect', () => {
+      console.log('Client disconnected');
     });
-
-    ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
-    };
-});
+  });
 
   // MQTT Client Setup
   const mqttClient = mqtt.connect('mqtt://test.mosquitto.org:1883');
@@ -55,7 +41,6 @@ app.prepare().then(() => {
   });
 
   mqttClient.on('message', (topic, message) => {
-
     // Parsing message
     let data = message.toString().split(":");
     let type = data[0];
@@ -69,34 +54,16 @@ app.prepare().then(() => {
       registerRotationSpeed(value);
     }
 
-    sendToDashboard(wss, data);
-    
+    sendToDashboard(io, data);
   });
 
-  // Sending data to frontend through web socket
   server.listen(process.env.PORT || 3000, () => {
     console.log(`> Server started on http://localhost:${process.env.PORT || 3000}`);
   });
-
-  // // Get all products
-  // router.get('/temperature', async (req, res) => {
-  //   try {
-  //     const products = await Temperature.find();
-  //     res.json(products);
-  //   } catch (error) {
-  //     res.status(500).json({ error: 'Internal server error' });
-  //   }
-  // });
-
-
 });
 
-function sendToDashboard(wss, data){
-  wss.clients.forEach((client) => {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(message.toString());
-    }
-  });
+function sendToDashboard(io, data){
+  io.emit('message', data);
 }
 
 async function registerTemperature(val){

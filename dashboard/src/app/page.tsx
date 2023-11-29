@@ -2,31 +2,33 @@
 
 import Image from 'next/image'
 import { useEffect } from 'react'
+import io from 'socket.io-client';
 
 export default function Home() {
 
 
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:3000');
+    // Connect to the server
+    const socket = io('http://localhost:3000');
 
-    ws.onopen = () => {
+    // Event listener for when the connection is established
+    socket.on('connect', () => {
         console.log('Connected to WebSocket');
-    };
+    });
 
-    ws.onmessage = (event) => {
-        console.log('Message from server:', event.data);
-    };
+    // Event listener for receiving messages
+    socket.on('message', (data) => {
+        console.log('Message from server:', data);
+    });
 
-    ws.onclose = () => {
+    // Event listener for when the connection is closed
+    socket.on('disconnect', () => {
         console.log('Disconnected from WebSocket');
-    };
+    });
 
-    ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
-    };
-
+    // Clean up the effect
     return () => {
-        ws.close();
+        socket.disconnect();
     };
 }, []);
 
