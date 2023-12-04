@@ -18,7 +18,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
 
-        <div className='w-full top-0 left-0 absolute'>
+        <div className='w-full top-0 left-0 fixed'>
           <h1 className='font-bold text-2xl m-10'>T21 Bioreactor</h1>
         </div>
         

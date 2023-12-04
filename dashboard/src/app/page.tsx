@@ -19,28 +19,29 @@ export default function Home() {
   const [currentPh, setCurrentPh] = useState(0.0)
   const [currentRots, setCurrentRots] = useState(0)
 
+  const [temperatures, setTemperatures] = useState<number[]>([]);
+  const [phs, setPhs] = useState<number[]>([]);
+  const [rotations, setRotations] = useState<number[]>([]);
+
   const [metrics, setMetrics] = useState<Metric[]>([]);
 
-useEffect(() => {
-  fetch('/api/get-target-metrics')
-  .then(response => {
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    return response.json();
-  })
-  .then(data => {
-    if (data.target_metrics && Array.isArray(data.target_metrics)) {
-      setMetrics(data.target_metrics);
-    }
-  })
-  .catch(error => {
-    console.error('Fetch error:', error);
-  });
-}, [])
-
-  
-
+  useEffect(() => {
+    fetch('/api/get-target-metrics')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (data.target_metrics && Array.isArray(data.target_metrics)) {
+        setMetrics(data.target_metrics);
+      }
+    })
+    .catch(error => {
+      console.error('Fetch error:', error);
+    });
+  }, [])
 
   useEffect(() => {
     // Connect to the server
@@ -59,13 +60,16 @@ useEffect(() => {
 
         if (type == "temp"){
           setCurrentTemp(value)
+          setTemperatures(oldArray => [...oldArray, value])
         } else if (type == "ph"){
           setCurrentPh(value)
+          setPhs(oldArray => [...oldArray, value])
         } else if (type == "rots"){
           setCurrentRots(value)
+          setRotations(oldArray => [...oldArray, value])
         }
 
-    });
+  });
 
     // Event listener for when the connection is closed
     socket.on('disconnect', () => {
@@ -90,10 +94,10 @@ useEffect(() => {
 
 
   return (
-    <main className="flex min-h-screen flex-row items-center justify-evenly w-full flex-wrap p-24">
-        <Temperature liveTemp={currentTemp} target={targetTemperature} />
-        <Ph livePh={currentPh} target={targetPh} />
-        <Rotations liveRots={currentRots} target={targetRotations} />
+    <main className=" h-full min-h-full  items-center  flex-nowrap p-24 scroll-smooth overflow-x-auto block whitespace-nowrap">
+        <Temperature liveTemp={currentTemp} target={targetTemperature} values={temperatures} />
+        <Ph livePh={currentPh} target={targetPh} values={phs} />
+        <Rotations liveRots={currentRots} target={targetRotations} values={rotations} />
     </main>
   )
 }

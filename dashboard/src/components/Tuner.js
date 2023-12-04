@@ -39,7 +39,7 @@ export default function Tuner({metric, current_value }) {
     <>
         <button 
                     onClick={() => { setIsOpen(true) }}
-                    className=' text-blue-600 text-center font-medium'>Modify</button>
+                    className=' text-blue-500 text-center font-medium'>Modify</button>
 
 
         {
