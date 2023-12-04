@@ -16,7 +16,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+
+        <div className='w-full top-0 left-0 absolute'>
+          <h1 className='font-bold text-2xl m-10'>T21 Bioreactor</h1>
+        </div>
+        
+        {children}
+        
+        </body>
     </html>
   )
 }
