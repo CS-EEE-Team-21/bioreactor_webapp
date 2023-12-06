@@ -69,7 +69,7 @@ export default function Tuner({metric, current_value }) {
 
                         <button
                         disabled={
-                            ...newValue == current_value ?
+                            newValue == current_value ?
                                 true
                             : false
                         }
