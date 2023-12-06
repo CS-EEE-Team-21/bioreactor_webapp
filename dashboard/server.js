@@ -94,13 +94,18 @@ app.prepare().then(() => {
 
 async function handleUpdateMetricRequest(body, res, mqttClient) {
   let metric = body.metric; // Accessing metric from request body
+  if (body.metric == "temperature"){
+    metric = "temp"
+  } else if(body.metric == "rotations"){
+    metric = "rots"
+  }
   let newValue = body.new_value; // Accessing new_value from request body
 
   try {
     newValue = parseFloat(newValue);
     metric = String(metric);
 
-    const doc = await TargetMetric.findOne({ type: metric }); // Find the document
+    const doc = await TargetMetric.findOne({ type: String(body.metric) }); // Find the document
     if (!doc) {
       throw new Error('Metric not found');
     }
@@ -131,7 +136,7 @@ function sendTargetMetrics(raw, client){
     } else if(element.type == "ph"){
       client.publish("UCL_EE-CS_team21_targets", "ph:"+String(element.value))
     } else if(element.type == "rotations"){
-      client.publish("UCL_EE-CS_team21_targets", "rotations:"+String(element.value))
+      client.publish("UCL_EE-CS_team21_targets", "rots:"+String(element.value))
     }
   })
 }

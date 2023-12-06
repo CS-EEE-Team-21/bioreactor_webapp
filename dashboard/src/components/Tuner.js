@@ -33,6 +33,9 @@ export default function Tuner({metric, current_value }) {
         .catch((error) => {
             console.error('Error:', error); // Handle the error
         });
+
+        setIsOpen(false)
+
     }
 
   return (

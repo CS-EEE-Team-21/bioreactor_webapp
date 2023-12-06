@@ -2,6 +2,7 @@ import React from 'react'
 import Tuner from './Tuner'
 
 export default function Target({ metric, current_value, target_value, unit }) {
+
   return (
     <div className='text-center align-middle my-2'>
         <div className='text-center text-2xl'>{String(target_value)+unit}</div>
