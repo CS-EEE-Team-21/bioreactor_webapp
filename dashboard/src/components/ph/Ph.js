@@ -71,7 +71,7 @@ export default function Ph({ livePh, target, values }) {
             <Target metric="ph" current_value={livePh} target_value={target} unit="" />
         </div>
 
-        <LiveChart labels={labels} data={data} />
+        <LiveChart labels={labels} data={data} range={[0, 14]} />
 
     </div>
   )

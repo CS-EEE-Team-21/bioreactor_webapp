@@ -70,7 +70,7 @@ export default function Rotations({ liveRots, target, values }) {
             <Target metric="rotations" current_value={liveRots} target_value={target} unit=" rpm" />
         </div>
 
-        <LiveChart labels={labels} data={data} />
+        <LiveChart labels={labels} data={data} range={[150, 400]} />
 
     </div>
   )

@@ -71,7 +71,7 @@ export default function Temperature({ liveTemp, target, values }) {
             <Target metric="temperature" current_value={liveTemp} target_value={target} unit="°C" />
         </div>
 
-        <LiveChart labels={labels} data={data} />
+        <LiveChart labels={labels} data={data} range={[10, 45]} />
 
     </div>
   )
