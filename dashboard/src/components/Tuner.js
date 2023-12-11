@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-export default function Tuner({metric, current_value }) {
+export default function Tuner({metric, current_value, changeTarget }) {
 
     const [newValue, setNewValue] = useState(current_value)
     const [isOpen, setIsOpen] = useState(false)
@@ -35,6 +35,8 @@ export default function Tuner({metric, current_value }) {
         });
 
         setIsOpen(false)
+
+        changeTarget(newValue)
 
     }
 

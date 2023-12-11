@@ -40,6 +40,8 @@ app.prepare().then(() => {
       });
     } else if (req.method === 'GET' && req.url === '/api/get-target-metrics') {
         handleGetTargetMetrics(res)
+    } else if (req.method === 'GET' && req.url.includes('/api/get-period')) {
+      handleGetPeriod(req, res)
     } else {
       // Handle other requests
       return handle(req, res);
@@ -152,6 +154,102 @@ async function handleGetTargetMetrics(res) {
     res.writeHead(500, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ message: err.message }));
   }
+}
+
+async function handleGetPeriod(req, res) {
+
+  var query = req.url;
+  var urlParams = new URLSearchParams(query)
+  const metric = urlParams.get('metric')
+  const period = urlParams.get('period')
+
+    // Current date and time
+    var currentDate = new Date();
+
+  if(period == '1d'){
+    let oneDayAgo = new Date(currentDate.getTime() - (24 * 60 * 60 * 1000));
+    var filter = {
+        time: {
+            $gte: oneDayAgo
+        }
+    };
+  } else if(period == '1h'){
+    let oneHourAgo = new Date(currentDate.getTime() - (60 * 60 * 1000));
+    var filter = {
+      time: {
+          $gte: oneHourAgo
+      }
+    };
+  } else if(period == '1w'){
+    let oneWeekAgo = new Date(currentDate.getTime() - (7 * 24 * 60 * 60 * 1000));
+    var filter = {
+      time: {
+          $gte: oneWeekAgo
+      }
+    };
+  } else if(period == '1m'){
+    let oneMonthAgo = new Date(currentDate.getTime() - (30 * 24 * 60 * 60 * 1000));
+    var filter = {
+      time: {
+          $gte: oneMonthAgo
+      }
+  };
+  }
+
+  var response;
+
+  if(metric == 'temperature'){
+    try {
+      response = await Temperature.find(filter); // Find the document
+    } catch (err) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ message: err.message }));
+    }
+  } else if(metric == 'ph'){
+    try {
+      response = await Ph.find(filter); // Find the document
+    } catch (err) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ message: err.message }));
+    }
+  } else if(metric == 'rotations'){
+    try {
+      response = await Temperature.find(filter); // Find the document
+    } catch (err) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ message: err.message }));
+    }
+  } else {
+    res.writeHead(500, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ message: 'Wrong url parameters.' }));
+  }
+
+  let values = [];
+  let og_dates = [];
+
+  response.forEach(item => {
+    values.push(item.value);  // Add the 'value' to the values array
+    og_dates.push(item.time);    // Add the 'time' to the dates array
+  });
+
+  let dates = og_dates.map(dateString => {
+    // Create a new Date object from the ISO string
+    let date = new Date(dateString);
+
+    // Convert to a readable format: MM/DD/YYYY, hh:mm:ss AM/PM
+    return date.toLocaleString('en-US', { 
+        year: 'numeric', 
+        month: '2-digit', 
+        day: '2-digit', 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: '2-digit', 
+        hour12: true 
+    });
+});
+
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ values, dates }));
 }
 
 

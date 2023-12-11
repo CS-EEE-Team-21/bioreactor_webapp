@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import LiveMetric from '../LiveMetric'
 import Target from '../Target'
 import LiveChart from '../LiveChart'
+import ViewMore from '../ViewMore'
 
 export default function Rotations({ liveRots, target, values }) {
 
@@ -62,7 +63,7 @@ export default function Rotations({ liveRots, target, values }) {
   }, [values])
 
   return (
-    <div className=' shadow-xl rounded-xl p-16 w-1/2 inline-block'>
+    <div className=' shadow-xl hover:shadow-2xl transition-all duration-200  rounded-xl p-16 w-1/2 inline-block'>
         <h2 className=' font-medium text-xl'>Rotations</h2>
         
         <div className='w-full flex justify-evenly mt-10'>
@@ -70,7 +71,9 @@ export default function Rotations({ liveRots, target, values }) {
             <Target metric="rotations" current_value={liveRots} target_value={target} unit=" rpm" />
         </div>
 
-        <LiveChart labels={labels} data={data} range={[150, 400]} />
+        <LiveChart data={data} range={[150, 400]} />
+
+        <ViewMore metric="rotations" range={[150, 400]} />
 
     </div>
   )

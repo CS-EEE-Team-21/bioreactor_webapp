@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import LiveMetric from '../LiveMetric'
 import Target from '../Target'
 import LiveChart from '../LiveChart'
+import ViewMore from '../ViewMore'
 
 export default function Ph({ livePh, target, values }) {
 
@@ -63,7 +64,7 @@ export default function Ph({ livePh, target, values }) {
   }, [values])
 
   return (
-    <div className=' shadow-xl rounded-xl p-16 w-1/2 inline-block mr-24'>
+    <div className=' shadow-xl hover:shadow-2xl transition-all duration-200  rounded-xl p-16 w-1/2 inline-block mr-24'>
         <h2 className=' font-medium text-xl'>pH</h2>
         
         <div className='w-full flex justify-evenly mt-10 '>
@@ -71,7 +72,9 @@ export default function Ph({ livePh, target, values }) {
             <Target metric="ph" current_value={livePh} target_value={target} unit="" />
         </div>
 
-        <LiveChart labels={labels} data={data} range={[0, 14]} />
+        <LiveChart data={data} range={[0, 14]} />
+
+        <ViewMore metric="ph" range={[0, 14]} />
 
     </div>
   )

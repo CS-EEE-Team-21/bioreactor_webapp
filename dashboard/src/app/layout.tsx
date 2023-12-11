@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import GreenLight from '../components/GreenLight'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -20,6 +21,23 @@ export default function RootLayout({
 
         <div className='w-full top-0 left-0 fixed'>
           <h1 className='font-bold text-2xl m-10'>T21 Bioreactor</h1>
+
+          <div className='absolute top-10 left-[33%] w-1/3'>
+            <div className='flex justify-evenly flex-row border-solid border-[1px] p-1 border-[#898989] rounded-2xl'>
+
+              <div className='flex flex-row'>
+                <GreenLight />
+                <div className='pt-1 ml-3'>mqtt broker</div>
+              </div>
+
+              <div className='flex flex-row'>
+                <GreenLight />
+                <div className='pt-1 ml-3'>database</div>
+              </div>
+
+            </div>
+          </div>
+
         </div>
         
         {children}

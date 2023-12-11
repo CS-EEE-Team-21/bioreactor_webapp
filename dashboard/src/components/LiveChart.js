@@ -37,7 +37,7 @@ ChartJS.register(
 
 
 
-export default function LiveChart({ labels, data, range }) {
+export default function LiveChart({ data, range }) {
 
     const [options, setOptions] = useState(
         {
