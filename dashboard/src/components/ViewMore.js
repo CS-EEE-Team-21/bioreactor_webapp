@@ -73,7 +73,7 @@ export default function ViewMore({ metric, range }) {
             >
             </div>
 
-            <div className='bg-white fixed  p-10 rounded-lg w-2/3 top-[15%] left-[17%]'>
+            <div className='bg-white fixed  p-10 rounded-lg w-2/3 top-[10%] left-[17%]'>
 
                 <div>
                   Period:

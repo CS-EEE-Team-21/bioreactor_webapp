@@ -94,7 +94,7 @@ export default function Home() {
 
 
   return (
-    <main className=" mt-5 h-[90%] min-h-full  items-center  flex-nowrap p-24 scroll-smooth overflow-x-auto block whitespace-nowrap">
+    <main className=" mt-5 h-[90%] min-h-full  items-center  flex-nowrap p-24 scroll-smooth overflow-x-auto overflow-y-hidden block whitespace-nowrap">
         <Temperature liveTemp={currentTemp} target={targetTemperature} values={temperatures} />
         <Ph livePh={currentPh} target={targetPh} values={phs} />
         <Rotations liveRots={currentRots} target={targetRotations} values={rotations} />

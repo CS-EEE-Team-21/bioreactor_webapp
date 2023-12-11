@@ -22,7 +22,7 @@ export default function RootLayout({
         <div className='w-full top-0 left-0 fixed'>
           <h1 className='font-bold text-2xl m-10'>T21 Bioreactor</h1>
 
-          <div className='absolute top-10 left-[33%] w-1/3'>
+          <div className='absolute top-7 left-[37.5%] w-1/4'>
             <div className='flex justify-evenly flex-row border-solid border-[1px] p-1 border-[#898989] rounded-2xl'>
 
               <div className='flex flex-row'>
