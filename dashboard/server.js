@@ -12,13 +12,15 @@ const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
+// Initalizing backend server
 app.prepare().then(() => {
 
   // MQTT Client Setup
   const mqttClient = mqtt.connect('mqtt://test.mosquitto.org:1883');
 
+  // Next JS server setup and route definitions
   const server = createServer((req, res) => {
-    // Check if it's a GET request and the path is '/api/update-metric'
+    
     if (req.method === 'POST' && req.url === '/api/update-metric') {
       let body = '';
       req.on('data', chunk => {
@@ -38,18 +40,21 @@ app.prepare().then(() => {
           res.end(JSON.stringify({ message: 'Invalid JSON' }));
         }
       });
+
     } else if (req.method === 'GET' && req.url === '/api/get-target-metrics') {
         handleGetTargetMetrics(res)
+
     } else if (req.method === 'GET' && req.url.includes('/api/get-period')) {
       handleGetPeriod(req, res)
+
     } else {
       // Handle other requests
       return handle(req, res);
     }
   });
 
+  // Web socket initialization
   const io = socketIo(server);
-
   io.on('connection', (socket) => {
     console.log('Client connected');
 
@@ -58,8 +63,11 @@ app.prepare().then(() => {
     });
   });
 
+  // Setting up MQTT client
   mqttClient.on('connect', () => {
     console.log('Connected to MQTT broker');
+
+  // Subscribing MQTT client to the 'UCL_EE-CS_team21' topic
     mqttClient.subscribe('UCL_EE-CS_team21', (err) => {
       if (err) {
         console.error('Error subscribing to topic:', err);
@@ -71,6 +79,7 @@ app.prepare().then(() => {
     initializeTargets(mqttClient)
   });
 
+  // 
   mqttClient.on('message', (topic, message) => {
     // Parsing message
     let data = message.toString().split(":");
