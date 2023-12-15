@@ -79,7 +79,7 @@ app.prepare().then(() => {
     initializeTargets(mqttClient)
   });
 
-  // 
+  // Handling messages from ESP32, received via MQTT
   mqttClient.on('message', (topic, message) => {
     // Parsing message
     let data = message.toString().split(":");
@@ -87,6 +87,7 @@ app.prepare().then(() => {
     let value = parseFloat(data[1]);
     data = [type, value]
 
+    // Registering the data
     if (type == "temp"){
       registerTemperature(value);
     } else if (type == "ph"){
@@ -95,14 +96,17 @@ app.prepare().then(() => {
       registerRotationSpeed(value);
     }
 
+    // Sending the data over web socket to all connected clients
     sendToDashboard(io, data);
   });
 
+  // Setting up server to listen to requests on port 3000
   server.listen(process.env.PORT || 3000, () => {
     console.log(`> Server started on http://localhost:${process.env.PORT || 3000}`);
   });
 });
 
+// Function to update targetted value
 async function handleUpdateMetricRequest(body, res, mqttClient) {
   let metric = body.metric; // Accessing metric from request body
   if (body.metric == "temperature"){
@@ -112,6 +116,7 @@ async function handleUpdateMetricRequest(body, res, mqttClient) {
   }
   let newValue = body.new_value; // Accessing new_value from request body
 
+  // Updating value in the database
   try {
     newValue = parseFloat(newValue);
     metric = String(metric);
@@ -123,6 +128,7 @@ async function handleUpdateMetricRequest(body, res, mqttClient) {
 
     await doc.updateOne({ value: newValue }); // Update the document
 
+    // Sending the update to ESP32 via MQTT
     mqttClient.publish("UCL_EE-CS_team21_targets", metric+":"+String(newValue)) // Sending update to ESP32
 
     res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -133,6 +139,7 @@ async function handleUpdateMetricRequest(body, res, mqttClient) {
   }
 }
 
+// Getting targetted values from database
 async function initializeTargets(client){
   let targets = await TargetMetric.find({})
   targets = JSON.stringify(targets)
@@ -152,6 +159,7 @@ function sendTargetMetrics(raw, client){
   })
 }
 
+// Getting targetted values from database
 async function handleGetTargetMetrics(res) {
   try {
 
@@ -165,6 +173,7 @@ async function handleGetTargetMetrics(res) {
   }
 }
 
+// Get data from specific period (1h, 1d, 1w, or 1m)
 async function handleGetPeriod(req, res) {
 
   var query = req.url;
